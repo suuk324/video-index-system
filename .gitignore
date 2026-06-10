@@ -18,6 +18,7 @@ tmp-*.log
 
 testimg.bin
 zzz.js
+tools/
 ui-ux-pro-max/
 
 .DS_Store
