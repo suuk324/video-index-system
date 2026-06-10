@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频聚合搜索播放器</title>
+    <link rel="stylesheet" href="/css/style.css?v=20260511-2">
+</head>
+<body>
+    <header class="header">
+        <div class="brand-block">
+            <span class="brand-mark">VIDEO INDEX</span>
+            <div class="brand-copy">
+                <h1 class="logo">视频聚合</h1>
+                <p class="brand-note">本地索引多个站点的公开视频元信息</p>
+            </div>
+        </div>
+
+        <div class="search-bar header-search">
+            <input type="text" id="searchInput" placeholder="搜索视频标题、标签、来源关键词" aria-label="搜索视频">
+            <button id="searchBtn" type="button" aria-label="搜索">搜索</button>
+        </div>
+
+        <nav class="header-nav" aria-label="主导航">
+            <button class="nav-btn active" type="button" data-tab="videos">视频列表</button>
+            <button class="nav-btn nav-subtle" type="button" data-tab="favorites">我的收藏</button>
+
+            <div class="more-wrap">
+                <button class="nav-btn nav-subtle" type="button" id="moreMenuBtn" aria-expanded="false" aria-haspopup="true">更多</button>
+                <div class="more-menu" id="moreMenu" role="menu" aria-label="更多功能">
+                    <button class="more-item" type="button" data-tab="sources" role="menuitem">视频源管理</button>
+                    <button class="more-item" type="button" data-tab="export" role="menuitem">订阅导出</button>
+                    <button class="more-item" type="button" data-tab="adapters" role="menuitem">适配器</button>
+                </div>
+            </div>
+
+            <button class="utility-btn" id="themeToggle" type="button" title="切换主题" aria-label="切换主题">◐</button>
+        </nav>
+    </header>
+
+    <main class="page-shell">
+        <section id="tab-videos" class="tab-content active">
+            <div class="toolbar-strip">
+                <div class="filters" id="filterBar">
+                    <label class="filter-field">
+                        <span>来源</span>
+                        <select id="filterSource" aria-label="筛选来源">
+                            <option value="">全部来源</option>
+                        </select>
+                    </label>
+                    <label class="filter-field">
+                        <span>分类</span>
+                        <select id="filterCategory" aria-label="筛选分类">
+                            <option value="">全部分类</option>
+                        </select>
+                    </label>
+                    <label class="filter-field">
+                        <span>标签</span>
+                        <select id="filterTag" aria-label="筛选标签">
+                            <option value="">全部标签</option>
+                        </select>
+                    </label>
+                    <label class="filter-field filter-field-sort">
+                        <span>排序</span>
+                        <select id="sortBy" aria-label="排序方式">
+                            <option value="updated_at">最新更新</option>
+                            <option value="created_at">最新添加</option>
+                            <option value="title">按标题</option>
+                            <option value="source_name">按来源</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="toolbar-actions">
+                    <button class="clear-filters" id="clearFilters" type="button" style="display:none">清除筛选</button>
+                    <div class="view-controls" aria-label="视图切换">
+                        <button class="view-btn active" id="viewGrid" type="button" title="网格视图" aria-label="网格视图">▦</button>
+                        <button class="view-btn" id="viewList" type="button" title="列表视图" aria-label="列表视图">☰</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-head">
+                <div>
+                    <p class="section-kicker">INDEX</p>
+                    <h2 class="section-title">视频列表</h2>
+                </div>
+                <p class="results-summary" id="resultsSummary">正在整理内容列表…</p>
+            </div>
+
+            <div class="video-grid" id="videoGrid" role="list" aria-label="视频列表"></div>
+            <div class="pagination" id="pagination"></div>
+        </section>
+
+        <section id="tab-favorites" class="tab-content">
+            <div class="panel-shell">
+                <div class="results-head">
+                    <div>
+                        <p class="section-kicker">CURATED</p>
+                        <h2 class="section-title">我的收藏</h2>
+                    </div>
+                    <p class="results-summary">从这里快速回到你标记过的内容。</p>
+                </div>
+                <div class="video-grid" id="favGrid" role="list" aria-label="收藏列表"></div>
+            </div>
+        </section>
+
+        <section id="tab-sources" class="tab-content">
+            <div class="panel-shell">
+                <div class="panel-head">
+                    <div>
+                        <p class="section-kicker">SOURCES</p>
+                        <h2 class="section-title">视频源管理</h2>
+                    </div>
+                    <div class="source-actions">
+                        <button id="addSourceBtn" class="btn-primary" type="button">添加视频源</button>
+                        <button id="scanAllBtn" class="btn-secondary" type="button">扫描全部</button>
+                        <button id="exportSourcesBtn" class="btn-secondary" type="button">导出源</button>
+                        <button id="importSourcesBtn" class="btn-secondary" type="button">导入源</button>
+                        <button id="backfillCoversBtn" class="btn-secondary" type="button">封面回填</button>
+                        <button id="cleanupDirtyBtn" class="btn-secondary" type="button">脏数据清理</button>
+                    </div>
+                </div>
+
+                <p class="maintenance-note">数据修复只处理空封面和明显错误记录，不会改动正常视频标题、标签和播放地址。</p>
+
+                <div id="scanStatus" class="scan-status" style="display:none">
+                    <div class="scan-progress"><div class="scan-bar" id="scanBar"></div></div>
+                    <span id="scanText"></span>
+                </div>
+
+                <div id="maintenanceResult" class="maintenance-result" style="display:none"></div>
+
+                <table class="source-table" role="table">
+                    <thead>
+                        <tr><th>名称</th><th>分类</th><th>网址</th><th>间隔(s)</th><th>启用</th><th>操作</th></tr>
+                    </thead>
+                    <tbody id="sourceList"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tab-export" class="tab-content">
+            <div class="panel-shell">
+                <div class="panel-head">
+                    <div>
+                        <p class="section-kicker">EXPORT</p>
+                        <h2 class="section-title">订阅导出</h2>
+                    </div>
+                    <p class="panel-note">统一生成 TVBox、M3U 和 Miraplay 可用的订阅入口。</p>
+                </div>
+                <p id="exportOriginNote" class="maintenance-note">优先显示可供局域网设备访问的订阅地址。</p>
+
+                <div class="export-cards">
+                    <div class="export-card">
+                        <h3>TVBox JSON</h3>
+                        <p>兼容 TVBox、FongMi 等播放器。</p>
+                        <div class="export-actions">
+                            <button id="openTvboxBtn" class="btn-primary open-export" type="button">打开链接</button>
+                            <button id="copyTvboxBtn" class="btn-secondary copy-export" type="button">复制链接</button>
+                        </div>
+                        <code id="tvboxUrl"></code>
+                    </div>
+                    <div class="export-card">
+                        <h3>M3U 订阅</h3>
+                        <p>兼容 IPTV 播放器和 VLC。</p>
+                        <div class="export-actions">
+                            <button id="openM3uBtn" class="btn-primary open-export" type="button">打开链接</button>
+                            <button id="copyM3uBtn" class="btn-secondary copy-export" type="button">复制链接</button>
+                        </div>
+                        <code id="m3uUrl"></code>
+                    </div>
+                    <div class="export-card">
+                        <h3>Miraplay</h3>
+                        <p>使用 CatPawOpen 导入地址，直接填入 Miraplay 视频源。</p>
+                        <div class="export-actions">
+                            <button id="openMiraplayBtn" class="btn-primary open-export" type="button">打开链接</button>
+                            <button id="copyMiraplayBtn" class="btn-secondary copy-export" type="button">复制链接</button>
+                        </div>
+                        <code id="miraplayUrl"></code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-adapters" class="tab-content">
+            <div class="panel-shell">
+                <div class="panel-head">
+                    <div>
+                        <p class="section-kicker">ADAPTERS</p>
+                        <h2 class="section-title">适配器管理</h2>
+                    </div>
+                    <div class="source-actions">
+                        <button id="addAdapterBtn" class="btn-primary" type="button">添加适配器</button>
+                    </div>
+                </div>
+
+                <p class="panel-note">为特定站点配置更精确的提取规则，提升封面、标签和播放入口的解析稳定性。</p>
+
+                <table class="source-table" role="table">
+                    <thead>
+                        <tr><th>名称</th><th>URL 匹配</th><th>列表选择器</th><th>启用</th><th>操作</th></tr>
+                    </thead>
+                    <tbody id="adapterList"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal-overlay" id="sourceModal" role="dialog" aria-label="视频源编辑">
+        <div class="modal">
+            <h2 id="sourceModalTitle">添加视频源</h2>
+            <form id="sourceForm">
+                <input type="hidden" id="sourceId">
+                <label>名称 <input type="text" id="sourceName" required></label>
+                <label>分类 <input type="text" id="sourceCategory"></label>
+                <label>网址 <input type="url" id="sourceUrl" required></label>
+                <label>刷新间隔(秒) <input type="number" id="sourceInterval" value="3600" min="60"></label>
+                <label>适配器
+                    <select id="sourceAdapter">
+                        <option value="generic">通用</option>
+                    </select>
+                </label>
+                <fieldset>
+                    <legend>CSS 选择器（可选）</legend>
+                    <label>标题 <input type="text" id="selectorTitle" placeholder=".title"></label>
+                    <label>封面 <input type="text" id="selectorCover" placeholder=".cover img"></label>
+                    <label>链接 <input type="text" id="selectorLink" placeholder=".item a"></label>
+                    <label>简介 <input type="text" id="selectorDesc" placeholder=".desc"></label>
+                </fieldset>
+                <label><input type="checkbox" id="sourceEnabled" checked> 启用</label>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary">保存</button>
+                    <button type="button" class="btn-secondary" id="sourceModalCancel">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="adapterModal" role="dialog" aria-label="适配器编辑">
+        <div class="modal">
+            <h2 id="adapterModalTitle">添加适配器</h2>
+            <form id="adapterForm">
+                <input type="hidden" id="adapterId">
+                <label>名称 <input type="text" id="adapterName" required placeholder="如：某电影网站"></label>
+                <label>URL 匹配关键词 <input type="text" id="adapterUrlPattern" required placeholder="如：example.com"></label>
+                <label>描述 <input type="text" id="adapterDesc" placeholder="可选"></label>
+                <fieldset>
+                    <legend>列表页选择器</legend>
+                    <label>列表容器 <input type="text" id="adapterListSel" placeholder=".movie-list li"></label>
+                    <label>标题 <input type="text" id="adapterTitleSel" placeholder=".title"></label>
+                    <label>封面 <input type="text" id="adapterCoverSel" placeholder="img"></label>
+                    <label>链接 <input type="text" id="adapterLinkSel" placeholder="a"></label>
+                    <label>简介 <input type="text" id="adapterDescSel" placeholder=".desc"></label>
+                </fieldset>
+                <fieldset>
+                    <legend>详情页选择器</legend>
+                    <label>标题 <input type="text" id="adapterDetailTitle" placeholder="h1"></label>
+                    <label>封面 <input type="text" id="adapterDetailCover" placeholder=".poster img"></label>
+                    <label>简介 <input type="text" id="adapterDetailDesc" placeholder=".content p"></label>
+                </fieldset>
+                <label>播放链接正则 <input type="text" id="adapterPlayPattern" placeholder="如：m3u8|mp4"></label>
+                <label><input type="checkbox" id="adapterEnabled" checked> 启用</label>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary">保存</button>
+                    <button type="button" class="btn-secondary" id="adapterModalCancel">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="detailModal" role="dialog" aria-label="视频详情">
+        <div class="modal modal-detail">
+            <button class="modal-close" id="detailClose" aria-label="关闭">&times;</button>
+            <div class="detail-content">
+                <img id="detailCover" class="detail-cover" src="" alt="">
+                <div class="detail-info">
+                    <p class="section-kicker">DETAIL</p>
+                    <h2 id="detailTitle"></h2>
+                    <div id="detailMeta" class="detail-meta"></div>
+                    <p id="detailDesc" class="detail-desc"></p>
+                    <div class="detail-actions">
+                        <button class="btn-primary" id="detailPlayBtn" type="button">播放</button>
+                        <button class="btn-secondary" id="detailFavBtn" type="button">收藏</button>
+                        <a id="detailLink" class="btn-secondary" href="#" target="_blank">原网页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="playerModal" role="dialog" aria-label="视频播放器">
+        <div class="modal modal-player">
+            <button class="modal-close" id="playerClose" aria-label="关闭">&times;</button>
+            <h2 id="playerTitle"></h2>
+            <div id="playerContainer" class="player-container"></div>
+            <p id="playerDesc" class="player-desc"></p>
+            <div id="playerMeta" class="player-meta"></div>
+        </div>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" type="button" title="回到顶部" aria-label="回到顶部">&uarr;</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+    <script src="/js/player.js?v=20260511-2"></script>
+    <script src="/js/app.js?v=20260511-1"></script>
+</body>
+</html>

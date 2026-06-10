@@ -1,0 +1,5 @@
+# 本项目使用 Python 标准库 + 系统已安装包，无需额外安装依赖
+# 已验证可用：beautifulsoup4, requests, lxml, pycryptodome
+# 后端：http.server（标准库）
+# 数据库：sqlite3（标准库）
+# 定时任务：threading.Timer（标准库）
