@@ -20,6 +20,7 @@
 ### 2. Sanitized public demo
 为了让作品集里可以稳定、安全地展示这个项目，仓库内额外提供了一个公开 demo：
 
+- Live: `https://suuk324.github.io/video-index-system/`
 - 路径：`demo/`
 - 特点：使用中性样例数据
 - 保留：界面设计、信息架构、筛选逻辑、source registry
