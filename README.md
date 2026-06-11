@@ -1,54 +1,63 @@
 # Video Index System
 
-一个本地部署的**公开视频元数据聚合与播放管理系统**。  
-它会抓取公开网页中的视频标题、封面、标签、详情页和播放入口，统一存进本地数据库，提供搜索、筛选、收藏、源管理和订阅导出能力。
+一个本地部署的 **内容索引 / 元数据聚合 / 播放入口管理系统原型**。  
+它会抓取公开网页中的标题、封面、标签、详情页与播放入口，并统一整理到本地数据库中，提供搜索、筛选、收藏、来源管理与导出能力。
 
-> 说明：本项目只聚合**公开页面元数据**，不下载视频文件本体。
+> 说明：本项目只聚合公开页面的元数据，不下载视频文件本体。
+
+## Two modes
+
+### 1. Local system
+完整的本地版本，包含：
+
+- 来源管理
+- 手动扫描 + 定时扫描
+- 元数据提取与去重
+- 搜索 / 分类 / 标签 / 来源筛选
+- 收藏与观看状态
+- 导出与订阅能力
+
+### 2. Sanitized public demo
+为了让作品集里可以稳定、安全地展示这个项目，仓库内额外提供了一个公开 demo：
+
+- 路径：`demo/`
+- 特点：使用中性样例数据
+- 保留：界面设计、信息架构、筛选逻辑、source registry
+- 移除：真实扫描、数据库更新、导出、敏感跳转能力
 
 ## Stack
 
 - Frontend: HTML / CSS / JavaScript
-- Backend: Python / FastAPI
+- Backend: Python
 - Data: SQLite
-- Scheduler: APScheduler
-- Parsing: httpx / BeautifulSoup
+- Parsing: requests / BeautifulSoup / lxml
 
-## Core Features
-
-- 多视频源管理
-- 手动扫描 + 定时扫描
-- 视频元数据提取与去重
-- 搜索 / 分类 / 标签 / 来源筛选
-- 页面内播放与跳转原站播放
-- 收藏与观看状态管理
-- 订阅导出（TVBox / M3U / Miraplay）
-- 适配器机制，方便扩展不同站点规则
-
-## Local Run
+## Local run
 
 ```bash
 pip install -r requirements.txt
 python start.py
 ```
 
-默认启动后可在本地浏览器访问对应端口查看。
+启动后在本地浏览器访问对应端口即可。
 
-## Project Structure
+## Project structure
 
 ```txt
-backend/    FastAPI, database, routers, services, adapters
-frontend/   HTML, CSS, JS, player
+backend/    backend services and adapters
+frontend/   original local UI
+demo/       sanitized public showcase for GitHub Pages
 start.py    local startup script
 ```
 
 ## Positioning
 
-这个项目不是普通静态网页，而是一个把：
+这个项目不是普通静态网页，而是把下面这些能力组合在一起的轻量系统原型：
 
 - 内容索引
 - 数据清洗
 - 规则适配
 - 搜索筛选
-- 前后端联动
+- 本地工具化工作流
 
-组合在一起的轻量系统型产品原型。
+重点不在“内容堆砌”，而在于把原始网页信息转译成一个可持续更新、可浏览、可扩展的系统界面。

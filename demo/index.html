@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video Index System — Public Demo</title>
+  <meta
+    name="description"
+    content="Video Index System 的公开演示版本：展示内容索引、来源管理、筛选浏览与系统化界面能力。"
+  />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="page-noise" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand-block">
+        <span class="eyebrow">SANITIZED PUBLIC DEMO</span>
+        <h1>VIDEO INDEX SYSTEM</h1>
+      </div>
+      <nav class="header-actions" aria-label="Project links">
+        <a class="ghost-btn" href="https://github.com/suuk324/video-index-system" target="_blank" rel="noreferrer">GitHub Repo</a>
+        <a class="ghost-btn" href="#explorer">Demo Explorer</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">LOCAL SYSTEM / PUBLIC SHOWCASE</p>
+          <h2>把“内容索引系统”做成一个可运行、可浏览、可展示的网页原型。</h2>
+          <p class="hero-lead">
+            这个公开版本使用中性演示数据，保留了信息架构、索引逻辑、来源管理和界面气质。
+            它不是原始本地系统的完整暴露，而是一个适合作品集展示的安全入口。
+          </p>
+
+          <div class="hero-chips">
+            <span>metadata indexing</span>
+            <span>source registry</span>
+            <span>search + filters</span>
+            <span>system prototype</span>
+          </div>
+
+          <div class="hero-note">
+            <strong>说明：</strong>
+            本页为公开 demo，只展示产品结构、浏览方式与信息设计。
+            原始本地版本包含扫描、适配、导出、收藏与数据库更新能力；
+            这些依赖本地环境或不适合公开演示的功能，在此版本中被安全禁用。
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="screen-card">
+            <img src="./assets/video-index-overview.png" alt="Video Index System 界面预览" />
+          </div>
+          <div class="screen-caption">Current local interface preview / dark system dashboard</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="container stats-grid">
+        <article class="stat-card">
+          <span class="stat-value">4</span>
+          <span class="stat-label">Core modules</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-value">4</span>
+          <span class="stat-label">Public sample sources</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-value">9</span>
+          <span class="stat-label">Demo index entries</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-value">Python + JS</span>
+          <span class="stat-label">Local stack</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="architecture">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">SYSTEM OVERVIEW</p>
+          <h3>这不是普通落地页，而是一个“来源管理 + 元数据提取 + 索引浏览”的轻量系统原型。</h3>
+          <p>重点不是内容本身，而是我如何把原始网页信息整理成一个可持续更新、可筛选浏览的本地系统。</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h4>Source management</h4>
+            <p>维护多个来源入口、分类、刷新节奏与适配方式，让“收集”本身也具备系统结构。</p>
+          </article>
+          <article class="feature-card">
+            <h4>Metadata extraction</h4>
+            <p>把标题、封面、标签、详情页与播放入口整理成结构化信息，而不是停留在原始网页碎片。</p>
+          </article>
+          <article class="feature-card">
+            <h4>Search & filter</h4>
+            <p>通过关键词、标签、来源和场景维度快速回到目标内容，提升浏览效率和检索体验。</p>
+          </article>
+          <article class="feature-card">
+            <h4>Delivery layer</h4>
+            <p>本地系统可以继续扩展收藏、导出和长期维护；公开 demo 只保留安全的界面层与交互逻辑。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="explorer" id="explorer">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">DEMO EXPLORER</p>
+          <h3>公开样例数据浏览</h3>
+          <p>下面使用的是中性演示数据，用来展示筛选、标签结构、信息卡片与系统化浏览方式。</p>
+        </div>
+
+        <div class="toolbar">
+          <label class="field">
+            <span>Search</span>
+            <input id="searchInput" type="text" placeholder="搜索标题、标签、来源或 summary" />
+          </label>
+          <label class="field">
+            <span>Source</span>
+            <select id="sourceFilter">
+              <option value="">All sources</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Tag</span>
+            <select id="tagFilter">
+              <option value="">All tags</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="results-meta" id="resultsMeta">Loading demo items…</div>
+        <div class="card-grid" id="cardGrid"></div>
+      </div>
+    </section>
+
+    <section class="sources">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">SOURCE REGISTRY</p>
+          <h3>公开演示中的来源管理视图</h3>
+          <p>这里模拟本地系统里的 source registry：每个来源都有类别、更新节奏与当前状态。</p>
+        </div>
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>Category</th>
+                <th>Update rhythm</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="sourceTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="public-note">
+      <div class="container note-shell">
+        <div>
+          <p class="eyebrow">PUBLIC SAFETY NOTE</p>
+          <h3>公开站保留设计与系统能力，不提供真实扫描、导出与跳转能力。</h3>
+        </div>
+        <p>
+          这样既能保证作品集中的展示链接稳定、安全，也能清晰说明这个项目真正有价值的部分：
+          信息架构能力、系统化界面能力，以及把本地工具思维转译成网页产品原型的能力。
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>Video Index System · Sanitized Public Demo</span>
+      <a href="https://github.com/suuk324/video-index-system" target="_blank" rel="noreferrer">Open repository</a>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>
